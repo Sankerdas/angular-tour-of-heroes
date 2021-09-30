@@ -27,6 +27,18 @@ export class HeroesComponent implements OnInit {
     )
   }
 
+  add(name: string): void {
+    name = name.trim();
+    if(!name) { return }
+    this.heroService.addHero({name} as Hero ) // send name as Hero
+    .subscribe( () => this.heroes.push()); // once sucessfully added into ther backed put data into local array
+  }
+
+  delete(hero: Hero) {
+    this.heroes = this.heroes.filter(h => h !== hero); // remove deleted hero from ui
+    this.heroService.deleteHero(hero.id).subscribe();
+  }
+
 
   // BEFORE NAVIGATION CODES
 
