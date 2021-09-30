@@ -21,7 +21,6 @@ export class HeroService {
 
   // Get all heroes
   getHeroes(): Observable<Hero[]> {
-
     // Mock server (similar to http server) response
     // it returns an observable
     return this.http.get<Hero[]>(this.heroesUrl)
@@ -29,18 +28,15 @@ export class HeroService {
       tap(_ => this.log('fetched heroes')), // WHAT is tap ??? I dont't know, FIND IT
       catchError(this.handleError<Hero[]>('getHeroes', []))
     ) // pipe used for observables error handling
-
-    // Mock data
-    // const heros = of(HEROES);
-    // this.messageService.add("HeroService: fetched heroes")
-
   }
 
   // Get specific hero
   getHero(id: number): Observable<Hero> {
-    const hero = HEROES.find(elm => elm.id === id)!;
-    this.messageService.add(`HeroService: fetched hero id=${id}`);
-    return of(hero);
+    const url = `${this.heroesUrl}/${id}`
+    return this.http.get<Hero>(url).pipe(
+      tap(_ => this.log(`fetched hero id=${id}`)),
+      catchError(this.handleError<Hero>(`getHero id=${id}`))
+    )
   }
 
   private log(message: string) {
@@ -55,5 +51,25 @@ export class HeroService {
       return of(result as T);
     };
   }
+
+
+
+  /* OLD CODES
+    Mock data */
+
+  // // get all heroes
+  // getHeroes(): Observable<Hero[]> {
+  //   const heros = of(HEROES);
+  //   this.messageService.add("HeroService: fetched heroes")
+
+  // }
+
+
+    // // Get specific hero
+    // getHero(id: number): Observable<Hero> {
+    //   const hero = HEROES.find(elm => elm.id === id)!;
+    //   this.messageService.add(`HeroService: fetched hero id=${id}`);
+    //   return of(hero);
+    // }
 
 }
