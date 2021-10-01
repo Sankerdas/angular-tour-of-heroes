@@ -19,13 +19,18 @@ export class HeroService {
 
   private heroesUrl = 'api/heroes'; // InMemoryData plugin format format : base/:collectionName
 
+
+  /*
+  ---> ## tap() : it will tap into the flow of observable values and we can use this to send values
+  */
+
   // Get all heroes
   getHeroes(): Observable<Hero[]> {
     // Mock server (similar to http server) response
     // it returns an observable
     return this.http.get<Hero[]>(this.heroesUrl)
     .pipe(
-      tap(_ => this.log('fetched heroes')), // WHAT is tap ??? I dont't know, FIND IT
+      tap(_ => this.log('fetched heroes')), // ## see tap() function definion on top
       catchError(this.handleError<Hero[]>('getHeroes', []))
     ) // pipe used for observables error handling
   }
@@ -80,6 +85,22 @@ export class HeroService {
       return of(result as T);
     };
   }
+
+
+  /* GET heroes whose name contains search term */
+  searchHeroes(term: string): Observable<Hero[]> {
+    if (!term.trim()) {
+      // if not search term, return empty hero array.
+      return of([]);
+    }
+    return this.http.get<Hero[]>(`${this.heroesUrl}/?name=${term}`).pipe(
+      tap(x => x.length ?
+        this.log(`found heroes matching "${term}"`) :
+        this.log(`no heroes matching "${term}"`)),
+      catchError(this.handleError<Hero[]>('searchHeroes', []))
+    );
+  }
+
 
 
 
